@@ -67,7 +67,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         for(Usuario aux:this.usuarios){
             jsonString += gson.toJson(aux);
         }
-
+        /*faltaría escribir esta linea en el archivo*/
         System.out.println(jsonString);
     }
 
@@ -79,7 +79,11 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
             if(aux.getNombre().equals(nombre))
                 return(false);
         }
+
+        Usuario aux = new Usuario(nombre,passwd);
+        this.usuarios.add(aux);
         this.grabarUsuarios();
+
         return(true);
     }
 
