@@ -12,9 +12,13 @@ import java.util.ArrayList;
 
 /**
  * @autor: Pablo García
- *
+ * Servidor P2P.
+ * Se encarga de:
+ * 1) Permitir el registro de nuevos usuarios añadiendolos al archivo usuarios.json
+ * 2) Permitir el log-in de un cliente, devolviendole su lista de amigos (interfaces remota y nombre)
+ * 3) Manejar el archivo de usuarios
+ * 4) Manejar la lista de clientes dinámicos (que hicieron log-in)
  */
-
 
 public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInterface{
 
@@ -146,6 +150,9 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         return(null);
     }
 
+    /**
+     * Encapsula cada elemento del array presente en usuarios.json
+     */
     public class Usuario{
 
         private String nombre;
