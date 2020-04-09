@@ -1,5 +1,6 @@
 package p2pServer;
 import java.rmi.*;
+import java.util.ArrayList;
 
 /**
  * Interfaz para objeto P2pServer
@@ -28,7 +29,7 @@ public interface P2pServerInterface extends Remote {
      * @throws Exception
      * @throws java.rmi.RemoteException
      */
-    public P2pClientInterface[] log(String nombre, String passwd, P2pClientInterface client)
+    public ArrayList<Cliente> log(String nombre, String passwd, P2pClientInterface client)
             throws Exception,java.rmi.RemoteException;
 
 

@@ -4,38 +4,45 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import com.google.gson.Gson;
-
-import java.io.IOException;
+import java.io.*;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.util.ArrayList;
 
-import java.io.FileReader;
-
 /**
- * Objeto servidor que implementa la interfaz remota CoronarioServerInterface
- * Es el encargado de:
- * 1)leer el fichero (con un hilo)
- * 2) enviar los datos a todos los clientes subscritos a través de callback.
- * 3) cesar las suscripciones.
- * Define una nueva clase Cliente que contiene el tiempo y la interfaz remota al cliente.
  * @autor: Pablo García
+ *
  */
 
 
 public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInterface{
 
-
+    /**
+     *  Usuarios a nivel de archivo. Con nombre, passwd y amigos(nombres).
+     *  Son estáticos. TODOS los usuarios registrados en la aplicación
+     */
     private ArrayList<Usuario> usuarios;
+
+    /**
+     *  Usuarios a nivel de interfaces remotas(aplicacion)
+     *  Son dinámicaos. TODOS los clientes logeados y por lo tanto activos
+     *  en este momento.
+     */
+    private ArrayList<Cliente> clientes;
 
     public P2pServerImpl() throws RemoteException {
         super( );
         usuarios= new ArrayList<>();
+        clientes= new ArrayList<>();
         this.pasearUsuarios();
     }
 
+    /**
+     * Leer el archivo y encapsular cada usuario en una clase Usuario.
+     * A mayores cada usuario queda almacenado en el Array usuarios.
+     * De esta forma usuarios contiene el archivo estructurado.
+     */
     public void pasearUsuarios(){
         JSONParser parser = new JSONParser();
         Object obj=null;
@@ -56,22 +63,40 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
             for(int j=0;j<amigos.size();j++){
                 aux.anhadirAmigo((String)amigos.get(j));
             }
+            /*Lo añadimos al array*/
             this.usuarios.add(aux);
         }
     }
 
+    /**
+     * Para grabar los usuario contenidos en usuarios al archivo.
+     */
     public void grabarUsuarios(){
         Gson gson = new Gson();
-        String jsonString="";
+        String json = "[";
 
-        for(Usuario aux:this.usuarios){
-            jsonString += gson.toJson(aux);
+        for(int i=0;i<this.usuarios.size()-1;i++){
+            json+=gson.toJson(this.usuarios.get(i));
+            json+=",";
         }
-        /*faltaría escribir esta linea en el archivo*/
-        System.out.println(jsonString);
+        json+=gson.toJson((this.usuarios.get(this.usuarios.size()-1)));
+        json+="]";
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("/home/pablo/usuarios.json"));
+            bw.write(json);
+            bw.close();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Fallo al escribir archivo");
+        }
     }
 
-
+    /**
+     * Recorremos todos los usuarios (previamente parseados) mirando si
+     * el usuario ya está dado de alta.
+     * Sincronizazdo para garantizar exclusión mutua de login y registro sobre array de usuarios.
+     */
     @Override
     public synchronized boolean registrarse(String nombre, String passwd){
 
@@ -80,15 +105,44 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
                 return(false);
         }
 
+        //Si llega hasta aquí el usuario no está dado de alta
         Usuario aux = new Usuario(nombre,passwd);
+        //Lo añadimos el array
         this.usuarios.add(aux);
+        //Grabamos a archivo
         this.grabarUsuarios();
 
         return(true);
     }
 
     @Override
-    public synchronized P2pClientInterface[] log(String nombre, String passwd, P2pClientInterface client) {
+    public synchronized ArrayList<Cliente> log(String nombre, String passwd, P2pClientInterface client) throws Exception {
+
+        for(Usuario aux : this.usuarios){
+            if(aux.getNombre().equals(nombre) && aux.getPasswd().equals(passwd)){
+                /**
+                 * Si el logeo es correcto:
+                 * 1) Recorremos los clientes activos.
+                 * 2) Almacenamos en array aquellos que tengan como amigo al usuario que hizo login.
+                 * 3) Si el cliente actual aparece como elemento -> ya está logeado
+                 * 5) Añadimos al usuario que hizo login como cliente activo
+                 * 4) Se los devolvemos.
+                 */
+                ArrayList<Cliente> amigos = new ArrayList<>();
+                for(Cliente cl : this.clientes){
+                    if(cl.getNombre().equals(nombre)){
+                        throw new Exception("El usuario ya está logueado");
+                    }
+                    if(aux.getAmigos().contains(cl.getNombre())){
+                        amigos.add(cl);
+                    }
+                }
+                //Creamos al cliente actual y lo añadimos al array de clientes.
+                Cliente cl = new Cliente(nombre,client);
+                this.clientes.add(cl);
+                return(amigos);
+            }
+        }
         return(null);
     }
 
@@ -116,6 +170,4 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
             amigos.add(amigo);
         }
     }
-
-
 }

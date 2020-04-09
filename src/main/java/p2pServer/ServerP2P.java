@@ -7,6 +7,7 @@
 
 package p2pServer;
 
+import javax.sound.midi.Soundbank;
 import java.rmi.*;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
@@ -35,13 +36,56 @@ public class ServerP2P{
             listRegistry(URL);
             System.out.println("\n**** P2P Server listo ****\n\n");
 
-            /*borrar esto*/
-            if(!exportedObj.registrarse("juann","asd")){
+            //////////////////////////////////////////////////
+            /////////////////////////////////////////////////
+            //////////////////////////////////////////////////
+            /////////////////////////////////////////////////
+            ////borrar
+            if(!exportedObj.registrarse("miguel","asd")){
                 System.out.println("Fallo al registrarse");
             }
             else{
                 System.out.println("Registro correcto");
             }
+
+            try {
+                if(exportedObj.log("juan", "juan", null)==null){
+                    System.out.println("El usuario no está registrado o la contraseña es incorrecta");
+                }
+                else{
+                    System.out.println("Usuario logeado correctamente");
+                }
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+
+            try {
+                if(exportedObj.log("pepe", "pepe", null)==null){
+                    System.out.println("El usuario no está registrado o la contraseña es incorrecta");
+                }
+                else{
+                    System.out.println("Usuario logeado correctamente");
+                }
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+
+            try {
+                if(exportedObj.log("pepe", "pepe", null)==null){
+                    System.out.println("El usuario no está registrado o la contraseña es incorrecta");
+                }
+                else{
+                    System.out.println("Usuario logeado correctamente");
+                }
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+
+            //////////////////////////////////////////////////
+            /////////////////////////////////////////////////
+            //////////////////////////////////////////////////
+            /////////////////////////////////////////////////
+            ////borrar
         }
         catch (Exception re) {
             System.out.println("!! Exception in ServerP2p.main: " + re.getMessage());
