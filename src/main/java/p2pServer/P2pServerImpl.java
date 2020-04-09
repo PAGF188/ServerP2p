@@ -150,6 +150,18 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         return(null);
     }
 
+    @Override
+    public synchronized void desLog(String nombre) {
+        for(Cliente cl : this.clientes){
+            if(cl.getNombre().equals(nombre)){
+                this.clientes.remove(cl);
+            }
+            else{
+                cl.getInterfazRemota().NotificaDesconexion(nombre);
+            }
+        }
+    }
+
     /**
      * Encapsula cada elemento del array presente en usuarios.json
      */

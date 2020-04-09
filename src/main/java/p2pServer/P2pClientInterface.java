@@ -16,4 +16,6 @@ public interface P2pClientInterface extends java.rmi.Remote{
      */
     public void mensaje(String message) throws java.rmi.RemoteException;
 
+    public void NotificaDesconexion(String nombre);
+
 }

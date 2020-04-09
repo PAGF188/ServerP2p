@@ -32,6 +32,13 @@ public interface P2pServerInterface extends Remote {
     public ArrayList<Cliente> log(String nombre, String passwd, P2pClientInterface client)
             throws Exception,java.rmi.RemoteException;
 
+    /**
+     * Eliminar al cliente actual del servidor y notificar a todos los clientes, que el cliente que hizo
+     * log-out ya no esta activo.
+     * @param nombre, del cliente a hacer log-out
+     */
+    public void desLog(String nombre)
+            throws Exception;
 
 
 
