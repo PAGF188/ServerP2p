@@ -1,3 +1,8 @@
+/**
+ * @autor Pablo García Fernández
+ * Clase que encapsula la interfaz remota de un cliente junto con su nombre de usuario
+ */
+
 package p2pServer;
 
 public class Cliente{

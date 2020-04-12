@@ -15,6 +15,8 @@ public interface P2pServerInterface extends Remote {
      * El objetivo es registrarse con un nombre y una contraseña en el servidor.
      * @param nombre, nombre de usuario ÚNICO
      * @param passwd, contraseña.
+     * @return booleam, False si el usuario ya está registrado
+     * @throws java.lang.Exception
      */
     public boolean registrarse(String nombre, String passwd)
                 throws Exception;
@@ -36,6 +38,7 @@ public interface P2pServerInterface extends Remote {
      * Eliminar al cliente actual del servidor y notificar a todos los clientes, que el cliente que hizo
      * log-out ya no esta activo.
      * @param nombre, del cliente a hacer log-out
+     * @throws java.lang.Exception
      */
     public void desLog(String nombre)
             throws Exception;

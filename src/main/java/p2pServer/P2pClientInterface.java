@@ -16,6 +16,19 @@ public interface P2pClientInterface extends java.rmi.Remote{
      */
     public void mensaje(String message) throws java.rmi.RemoteException;
 
-    public void NotificaDesconexion(String nombre);
+    /**
+     * Este método es invocado por el servidor para notificar de la
+     * desconexión de un amigo
+     * @param nombre identificador del amigo
+     */
+    public void notificaDesconexion(String nombre);
+
+    /**
+     * Este método es invocado por el servidor para notificar de la conexión
+     * de un nuevo amigo
+     * @param cl . Se le pasa está clase que contiene la interfaz remota del amigo
+     * y su nombre.
+     */
+    public void notificaConexion(Cliente cl);
 
 }

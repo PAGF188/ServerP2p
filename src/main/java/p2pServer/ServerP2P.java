@@ -1,13 +1,12 @@
 
 /**
  * Servidor de objetos, encargado de instanciar y exportar P2pServerImpl.
- * 99% igual al de la practica anterior.
+ * 99% igual al de la practica anterior. Solo cambiar URL y objetos instanciados
  * @autor Pablo García
  */
 
 package p2pServer;
 
-import javax.sound.midi.Soundbank;
 import java.rmi.*;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
@@ -31,8 +30,8 @@ public class ServerP2P{
             P2pServerImpl exportedObj = new P2pServerImpl();
 
             URL = "rmi://localhost:" + puerto + "/p2p";
-            /*revisar el Remote*/
             Naming.rebind(URL, exportedObj);
+
             listRegistry(URL);
             System.out.println("\n**** P2P Server listo ****\n\n");
 
@@ -41,6 +40,7 @@ public class ServerP2P{
             //////////////////////////////////////////////////
             /////////////////////////////////////////////////
             ////borrar
+
             if(!exportedObj.registrarse("miguel","asd")){
                 System.out.println("Fallo al registrarse");
             }
@@ -81,13 +81,15 @@ public class ServerP2P{
                 System.out.println(e.getMessage());
             }
 
-            //exportedObj.desLog("pepe");
+            exportedObj.desLog("pepe");
 
             //////////////////////////////////////////////////
             /////////////////////////////////////////////////
             //////////////////////////////////////////////////
             /////////////////////////////////////////////////
             ////borrar
+
+
         }
         catch (Exception re) {
             System.out.println("!! Exception in ServerP2p.main: " + re.getMessage());

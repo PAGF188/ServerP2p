@@ -9,6 +9,7 @@ import java.io.*;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @autor: Pablo García
@@ -18,6 +19,7 @@ import java.util.ArrayList;
  * 2) Permitir el log-in de un cliente, devolviendole su lista de amigos (interfaces remota y nombre)
  * 3) Manejar el archivo de usuarios
  * 4) Manejar la lista de clientes dinámicos (que hicieron log-in)
+ * 5) Log-out y notificacion a amigos
  */
 
 public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInterface{
@@ -106,10 +108,11 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
 
         for(Usuario aux : this.usuarios){
             if(aux.getNombre().equals(nombre))
+                //el usuario ya esta registrado
                 return(false);
         }
 
-        //Si llega hasta aquí el usuario no está dado de alta
+        //Si llega hasta aquí el usuario no está registrado
         Usuario aux = new Usuario(nombre,passwd);
         //Lo añadimos el array
         this.usuarios.add(aux);
@@ -119,9 +122,13 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         return(true);
     }
 
+    /**
+     * Recorre Usuarios para comprobar nombre y passwd correctos.
+     * Recorre clientes para ver si no esta logeado. Añadirlo, obtener amigos y notificar a los amigos su conexión
+     */
     @Override
     public synchronized ArrayList<Cliente> log(String nombre, String passwd, P2pClientInterface client) throws Exception {
-
+        Cliente cl_actual = new Cliente(nombre,client);
         for(Usuario aux : this.usuarios){
             if(aux.getNombre().equals(nombre) && aux.getPasswd().equals(passwd)){
                 /**
@@ -139,27 +146,36 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
                     }
                     if(aux.getAmigos().contains(cl.getNombre())){
                         amigos.add(cl);
+                        //cl.getInterfazRemota().notificaConexion(cl_actual);
                     }
                 }
                 //Creamos al cliente actual y lo añadimos al array de clientes.
-                Cliente cl = new Cliente(nombre,client);
-                this.clientes.add(cl);
+
+                this.clientes.add(cl_actual);
                 return(amigos);
             }
         }
         return(null);
     }
 
+    /**
+     * Recorremos clientes. Si es el que hace log-out, lo eliminamos. Si es otro, notificamos su desconexión
+     * @param nombre, del cliente a hacer log-out
+     */
     @Override
     public synchronized void desLog(String nombre) {
+        ArrayList<Cliente> eliminar = new ArrayList<>();
+
         for(Cliente cl : this.clientes){
             if(cl.getNombre().equals(nombre)){
-                this.clientes.remove(cl);
+                eliminar.add(cl);
             }
             else{
-                cl.getInterfazRemota().NotificaDesconexion(nombre);
+                //cl.getInterfazRemota().notificaDesconexion(nombre);
             }
         }
+
+        this.clientes.removeAll(eliminar);
     }
 
     /**
