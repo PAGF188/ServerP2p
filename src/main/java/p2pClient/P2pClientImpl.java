@@ -13,9 +13,12 @@ import java.rmi.server.*;
 
 public class P2pClientImpl extends UnicastRemoteObject implements P2pClientInterface {
 
-     public P2pClientImpl() throws RemoteException {
+     public Vin vin;
+
+     public P2pClientImpl(Vin vin) throws RemoteException {
         super( );
-    }   
+        this.vin=vin;
+     }
     
     @Override
     public void mensaje(String message){
@@ -30,6 +33,7 @@ public class P2pClientImpl extends UnicastRemoteObject implements P2pClientInter
     @Override
     public void notificaConexion(Cliente cl){
         P2pClient.amigos.add(cl);
+        vin.actualizarAmigos();
     }
 
 }

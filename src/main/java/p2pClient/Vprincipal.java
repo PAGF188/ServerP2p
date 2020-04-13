@@ -224,11 +224,12 @@ public class Vprincipal extends javax.swing.JFrame {
         else{
             //log-in
             try{
-                P2pClient.yo = new P2pClientImpl();
+                Vin vin = new Vin();
+                P2pClient.yo = new P2pClientImpl(vin);
                 P2pClient.amigos = P2pClient.server.log(usuario.getText(), passwd.getText(), P2pClient.yo);
                 if(P2pClient.amigos!=null){
-                    Vin vin = new Vin();
                     this.setVisible(false);
+                    vin.actualizarAmigos();
                     vin.setVisible(true);
                 }else{
                     error.setText("Las credenciales de acceso son incorrectas");
