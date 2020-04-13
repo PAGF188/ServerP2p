@@ -40,7 +40,7 @@ public class ServerP2P{
             //////////////////////////////////////////////////
             /////////////////////////////////////////////////
             ////borrar
-
+            /*
             if(!exportedObj.registrarse("miguel","asd")){
                 System.out.println("Fallo al registrarse");
             }
@@ -88,7 +88,7 @@ public class ServerP2P{
             //////////////////////////////////////////////////
             /////////////////////////////////////////////////
             ////borrar
-
+            */
 
         }
         catch (Exception re) {

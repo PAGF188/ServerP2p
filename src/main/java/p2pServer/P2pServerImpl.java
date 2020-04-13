@@ -146,7 +146,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
                     }
                     if(aux.getAmigos().contains(cl.getNombre())){
                         amigos.add(cl);
-                        //cl.getInterfazRemota().notificaConexion(cl_actual);
+                        cl.getInterfazRemota().notificaConexion(cl_actual);
                     }
                 }
                 //Creamos al cliente actual y lo añadimos al array de clientes.
@@ -171,7 +171,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
                 eliminar.add(cl);
             }
             else{
-                //cl.getInterfazRemota().notificaDesconexion(nombre);
+                cl.getInterfazRemota().notificaDesconexion(nombre);
             }
         }
 

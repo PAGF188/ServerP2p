@@ -43,6 +43,4 @@ public interface P2pServerInterface extends Remote {
     public void desLog(String nombre)
             throws Exception;
 
-
-
 }
