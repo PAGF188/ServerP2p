@@ -1,0 +1,3 @@
+./gradlew server
+./gradlew client
+

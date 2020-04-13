@@ -118,13 +118,16 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         this.usuarios.add(aux);
         //Grabamos a archivo
         this.grabarUsuarios();
-
+        //---debug
+        System.out.println("Nuevo usuario " + nombre + "registrado");
+        //debug----
         return(true);
     }
 
     /**
      * Recorre Usuarios para comprobar nombre y passwd correctos.
      * Recorre clientes para ver si no esta logeado. Añadirlo, obtener amigos y notificar a los amigos su conexión
+     * Devuelve null si fallo credenciales
      */
     @Override
     public synchronized ArrayList<Cliente> log(String nombre, String passwd, P2pClientInterface client) throws Exception {
@@ -152,6 +155,17 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
                 //Creamos al cliente actual y lo añadimos al array de clientes.
 
                 this.clientes.add(cl_actual);
+                //------debug
+                System.out.println("Nuevo usuario " + nombre+ " logueado");
+                System.out.println("Amigos: ");
+                for(Cliente debug : amigos){
+                    System.out.println("Amigo: " + debug.getNombre() + "  " + debug.getInterfazRemota());
+                }
+                System.out.println("\nClientes actuales");
+                for(Cliente debug : this.clientes){
+                    System.out.println("Cliente: " + debug.getNombre() + "  " + debug.getInterfazRemota());
+                }
+                //debug--------
                 return(amigos);
             }
         }
@@ -171,7 +185,11 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
                 eliminar.add(cl);
             }
             else{
-                cl.getInterfazRemota().notificaDesconexion(nombre);
+                try {
+                    cl.getInterfazRemota().notificaDesconexion(nombre);
+                } catch (RemoteException e) {
+                    System.out.println(e.getMessage());
+                }
             }
         }
 

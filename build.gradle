@@ -3,18 +3,29 @@ plugins {
 }
 
 group 'org.example'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 sourceCompatibility = 1.8
 
 //create a single Jar with all dependencies
-task fatJar(type: Jar) {
+task server(type: Jar) {
     manifest {
-        attributes 'Implementation-Title': 'P2pServer',
+        attributes 'Implementation-Title': 'Server',
                 'Implementation-Version': version,
-                'Main-Class': 'ServerP2P'
+                'Main-Class': 'p2pServer.ServerP2P'
     }
-    baseName = project.name + '-all'
+    baseName = 'Server'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+task client(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Client',
+                'Implementation-Version': version,
+                'Main-Class': 'p2pClient.P2pClient'
+    }
+    baseName = 'Client'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }

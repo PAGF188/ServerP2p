@@ -29,7 +29,7 @@ public class P2pClientImpl extends UnicastRemoteObject implements P2pClientInter
 
     @Override
     public void notificaConexion(Cliente cl){
-
+        P2pClient.amigos.add(cl);
     }
 
 }
