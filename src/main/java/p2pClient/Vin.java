@@ -5,9 +5,14 @@
  */
 package p2pClient;
 
+import com.sun.security.ntlm.Client;
 import p2pServer.Cliente;
 
-import javax.swing.JButton;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.HashMap;
 
 /**
  *
@@ -15,14 +20,23 @@ import javax.swing.JButton;
  */
 public class Vin extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Vin
-     */
+    /*Necesito tener un arrayList que relacioe tablas con usuarios ¿Un hashMap?*/
+    private HashMap<String,JTable> usuario_tabla;
+
+    /*Usuario activo con el que estoy hablando*/
+    private String usuario;
+
     public Vin() {
         initComponents();
 
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        this.usuario_tabla = new HashMap<>();
+        this.usuario=null;
+    }
+
+    public HashMap<String, JTable> getUsuario_tabla() {
+        return usuario_tabla;
     }
 
     /**
@@ -37,6 +51,9 @@ public class Vin extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        scroll = new javax.swing.JScrollPane();
+        jPanel4 = new javax.swing.JPanel();
+        send = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -64,17 +81,42 @@ public class Vin extends javax.swing.JFrame {
                                 .addContainerGap(419, Short.MAX_VALUE))
         );
 
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+                jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(44, 44, 44)
+                                .addComponent(send, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(47, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+                jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(send, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                                .addContainerGap())
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 402, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
-                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(6, 6, 6))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -88,8 +130,78 @@ public class Vin extends javax.swing.JFrame {
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+
+        /*Send*/
+        send.setFont(new java.awt.Font("Cantarell", 0, 21)); // NOI18N
+        send.setText("Escribe tu mensaje aquí");
+        send.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                sendFocusLost(evt);
+            }
+        });
+        send.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sendMouseClicked(evt);
+            }
+        });
+        send.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                sendKeyTyped(evt);
+            }
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                sendKeyPressed(evt);
+            }
+        });
+
+
         pack();
     }// </editor-fold>
+
+    /**/
+    private void sendKeyPressed(java.awt.event.KeyEvent evt) {
+        // enviar pulsando en "enter"
+        if(evt.getKeyCode()== KeyEvent.VK_ENTER){
+            this.enviar();
+        }
+    }
+
+    private void sendMouseClicked(java.awt.event.MouseEvent evt) {
+        // Al cliclar el la textBox de entrada, se elimina el mensaje informativo
+        if(send.getText().equals("Escribe tu mensaje aquí"))
+            send.setText(null);
+    }
+
+    private void sendFocusLost(java.awt.event.FocusEvent evt) {
+        // El perder el focus (clicar en otro elemento), se reinicia el mensaje informativo
+        if(send.getText().equals("")){
+            send.setText("Escribe tu mensaje aquí");
+        }
+    }
+
+    private void sendKeyTyped(java.awt.event.KeyEvent evt) {
+        /* Como el tamaño límite de los mensajes es 27 bytes,
+        cada vez que se introduce un nuevo caracter se comprueba si no rebasa el límite.
+        En caso afirmativo se rechazaría*/
+        if(send.getText().getBytes().length == 27){
+            evt.consume();
+        }
+    }
+
+    private void enviar(){
+        /*Enviar*/
+        for(Cliente clAux : P2pClient.amigos){
+            if(clAux.getNombre().equals(usuario)){
+                try{
+                    clAux.getInterfazRemota().mensaje(send.getText(),clAux.getNombre());
+                }catch(Exception e){
+                    System.out.println("Error al enviar mensaje de " + usuario + "a " + clAux.getNombre());
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+    }
+
+    /*Nota para eliminar el boton habrá que recorrer jPanel2 y eliminar el que tenga como texto un nombre ocncreto*/
     public void actualizarAmigos(){
         int incremento=0;
         for(Cliente amigo: P2pClient.amigos){
@@ -100,6 +212,26 @@ public class Vin extends javax.swing.JFrame {
             aux.setBackground(new java.awt.Color(71, 103, 176));
             aux.setFont(new java.awt.Font("Cantarell", 1, 24));
             aux.setForeground(new java.awt.Color(254, 254, 254));
+
+            /*creamos el controlador para el boton*/
+            aux.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    /*si no existe su tabla:*/
+                    if(!usuario_tabla.containsKey(amigo.getNombre())){
+                        JTable tabla = new JTable();
+                        tabla.setModel(new ModeloTabla());
+                        usuario_tabla.put(amigo.getNombre(),tabla);
+                        scroll.setViewportView(tabla);
+                    }
+                    /*si ya existe*/
+                    else{
+                        scroll.setViewportView(usuario_tabla.get(amigo.getNombre()));
+                    }
+                    usuario=amigo.getNombre();
+                }
+            });
+
             jPanel2.add(aux);
             this.repaint();
             incremento+=70;
@@ -110,5 +242,8 @@ public class Vin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane scroll;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JTextField send;
     // End of variables declaration
 }

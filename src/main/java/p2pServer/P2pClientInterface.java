@@ -14,7 +14,7 @@ public interface P2pClientInterface extends java.rmi.Remote{
      * @param message, información que se pasa.
      * @throws java.rmi.RemoteException
      */
-    public void mensaje(String message) throws java.rmi.RemoteException;
+    public void mensaje(String message, String emisor) throws java.rmi.RemoteException;
 
     /**
      * Este método es invocado por el servidor para notificar de la

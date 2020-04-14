@@ -21,8 +21,9 @@ public class P2pClientImpl extends UnicastRemoteObject implements P2pClientInter
      }
     
     @Override
-    public void mensaje(String message){
-
+    public void mensaje(String message, String emisor){
+        ModeloTabla aux = (ModeloTabla) vin.getUsuario_tabla().get(emisor).getModel();
+        aux.addComentario(message);
     }
     
     @Override
