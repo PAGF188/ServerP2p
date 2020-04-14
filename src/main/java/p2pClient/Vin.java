@@ -5,10 +5,10 @@
  */
 package p2pClient;
 
-import com.sun.security.ntlm.Client;
 import p2pServer.Cliente;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -192,10 +192,11 @@ public class Vin extends javax.swing.JFrame {
         for(Cliente clAux : P2pClient.amigos){
             if(clAux.getNombre().equals(usuario)){
                 try{
-                    clAux.getInterfazRemota().mensaje(send.getText(),clAux.getNombre());
+                    clAux.getInterfazRemota().mensaje(send.getText(), P2pClient.yoNombre);
                 }catch(Exception e){
-                    System.out.println("Error al enviar mensaje de " + usuario + "a " + clAux.getNombre());
-                    System.out.println(e.getMessage());
+                    System.out.println("Error al enviar mensaje de " + P2pClient.yoNombre + " a " + clAux.getNombre());
+                    System.out.println("Interfaz remota: " + clAux.getInterfazRemota());
+                    e.printStackTrace();
                 }
             }
         }
@@ -205,37 +206,56 @@ public class Vin extends javax.swing.JFrame {
     public void actualizarAmigos(){
         int incremento=0;
         for(Cliente amigo: P2pClient.amigos){
-            JButton aux = new JButton();
-            aux.setText(amigo.getNombre());
-            aux.setSize(140,38);
-            aux.setLocation(41,70+incremento);
-            aux.setBackground(new java.awt.Color(71, 103, 176));
-            aux.setFont(new java.awt.Font("Cantarell", 1, 24));
-            aux.setForeground(new java.awt.Color(254, 254, 254));
+            /*Si el amigo no está añadido ya a la interfaz, lo añadimos en forma bootón y creamos su tabla*/
+            if(!this.contiene(jPanel2,amigo)){
+                JButton aux = new JButton();
+                aux.setText(amigo.getNombre());
+                aux.setSize(140,38);
+                aux.setLocation(41,70+incremento);
+                aux.setBackground(new java.awt.Color(71, 103, 176));
+                aux.setFont(new java.awt.Font("Cantarell", 1, 24));
+                aux.setForeground(new java.awt.Color(254, 254, 254));
 
-            /*creamos el controlador para el boton*/
-            aux.addActionListener(new ActionListener() {
+                /*creamos el controlador para el boton*/
+                aux.addActionListener(new ActionListener() {
 
-                public void actionPerformed(ActionEvent e) {
-                    /*si no existe su tabla:*/
-                    if(!usuario_tabla.containsKey(amigo.getNombre())){
-                        JTable tabla = new JTable();
-                        tabla.setModel(new ModeloTabla());
-                        usuario_tabla.put(amigo.getNombre(),tabla);
-                        scroll.setViewportView(tabla);
+                    public void actionPerformed(ActionEvent e) {
+                        /*si no existe su tabla:*/
+                        if(!usuario_tabla.containsKey(aux.getText())){
+                            JTable tabla = new JTable();
+                            tabla.setModel(new ModeloTabla());
+                            usuario_tabla.put(aux.getText(),tabla);
+                            scroll.setViewportView(tabla);
+                        }
+                        /*si ya existe*/
+                        else{
+                            scroll.setViewportView(usuario_tabla.get(aux.getText()));
+                        }
+                        usuario = aux.getText();
                     }
-                    /*si ya existe*/
-                    else{
-                        scroll.setViewportView(usuario_tabla.get(amigo.getNombre()));
-                    }
-                    usuario=amigo.getNombre();
-                }
-            });
+                });
+                /*añadimos el botón*/
+                jPanel2.add(aux);
+                /*creamos la tabla*/
+                JTable tabla = new JTable();
+                tabla.setModel(new ModeloTabla());
+                usuario_tabla.put(aux.getText(),tabla);
+                this.repaint();
+                incremento+=70;
+            }
 
-            jPanel2.add(aux);
-            this.repaint();
-            incremento+=70;
         }
+        /*Debug*/
+        System.out.println("Componentes jpanel4: " + jPanel4.getComponents().length);
+    }
+
+    public boolean contiene(JPanel jp,Cliente cl){
+        for(Component cp: jp.getComponents()){
+            if(cp instanceof JButton && ((JButton) cp).getText().equals(cl.getNombre())){
+                return(true);
+            }
+        }
+        return(false);
     }
 
     // Variables declaration - do not modify

@@ -225,6 +225,7 @@ public class Vprincipal extends javax.swing.JFrame {
             //log-in
             try{
                 Vin vin = new Vin();
+                P2pClient.yoNombre = usuario.getText();
                 P2pClient.yo = new P2pClientImpl(vin);
                 P2pClient.amigos = P2pClient.server.log(usuario.getText(), passwd.getText(), P2pClient.yo);
                 if(P2pClient.amigos!=null){

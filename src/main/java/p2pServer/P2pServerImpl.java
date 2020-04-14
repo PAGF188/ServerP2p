@@ -169,6 +169,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
                 return(amigos);
             }
         }
+        /*Si llegamos aquí, no existe la pareja usuario-password en el archivo*/
         return(null);
     }
 

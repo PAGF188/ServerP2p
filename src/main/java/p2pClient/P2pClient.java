@@ -17,7 +17,8 @@ import java.util.ArrayList;
  * @author pablo
  */
 public class P2pClient {
-    
+
+    public static String yoNombre;
     public static P2pClientInterface yo;
     public static P2pServerInterface server;
     public static ArrayList<Cliente> amigos;
