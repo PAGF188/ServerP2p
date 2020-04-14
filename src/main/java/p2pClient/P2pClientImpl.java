@@ -35,6 +35,10 @@ public class P2pClientImpl extends UnicastRemoteObject implements P2pClientInter
     public void notificaConexion(Cliente cl){
         P2pClient.amigos.add(cl);
         vin.actualizarAmigos();
+        System.out.println("Notificacion entrante de "+ cl.getNombre() + " . Amigos actuales: ");
+        for(Cliente cl2 : P2pClient.amigos){
+            System.out.println(cl2.getNombre());
+        }
     }
 
 }

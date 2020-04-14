@@ -201,12 +201,12 @@ public class Vin extends javax.swing.JFrame {
             }
         }
     }
-
+    /*Depurar está función. No funciona bien cuando entra Pablo*/
     /*Nota para eliminar el boton habrá que recorrer jPanel2 y eliminar el que tenga como texto un nombre ocncreto*/
     public void actualizarAmigos(){
         int incremento=0;
         for(Cliente amigo: P2pClient.amigos){
-            /*Si el amigo no está añadido ya a la interfaz, lo añadimos en forma bootón y creamos su tabla*/
+            /*Si el amigo no está añadido ya a la interfaz, lo añadimos en forma botón y creamos su tabla*/
             if(!this.contiene(jPanel2,amigo)){
                 JButton aux = new JButton();
                 aux.setText(amigo.getNombre());
