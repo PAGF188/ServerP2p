@@ -204,14 +204,15 @@ public class Vin extends javax.swing.JFrame {
     /*Depurar está función. No funciona bien cuando entra Pablo*/
     /*Nota para eliminar el boton habrá que recorrer jPanel2 y eliminar el que tenga como texto un nombre ocncreto*/
     public void actualizarAmigos(){
-        int incremento=0;
+        int incremento=70;
         for(Cliente amigo: P2pClient.amigos){
             /*Si el amigo no está añadido ya a la interfaz, lo añadimos en forma botón y creamos su tabla*/
             if(!this.contiene(jPanel2,amigo)){
+                System.out.println("Vamos añadir a: " + amigo.getNombre());
                 JButton aux = new JButton();
                 aux.setText(amigo.getNombre());
                 aux.setSize(140,38);
-                aux.setLocation(41,70+incremento);
+                aux.setLocation(41, incremento);
                 aux.setBackground(new java.awt.Color(71, 103, 176));
                 aux.setFont(new java.awt.Font("Cantarell", 1, 24));
                 aux.setForeground(new java.awt.Color(254, 254, 254));
@@ -220,17 +221,7 @@ public class Vin extends javax.swing.JFrame {
                 aux.addActionListener(new ActionListener() {
 
                     public void actionPerformed(ActionEvent e) {
-                        /*si no existe su tabla:*/
-                        if(!usuario_tabla.containsKey(aux.getText())){
-                            JTable tabla = new JTable();
-                            tabla.setModel(new ModeloTabla());
-                            usuario_tabla.put(aux.getText(),tabla);
-                            scroll.setViewportView(tabla);
-                        }
-                        /*si ya existe*/
-                        else{
-                            scroll.setViewportView(usuario_tabla.get(aux.getText()));
-                        }
+                        scroll.setViewportView(usuario_tabla.get(aux.getText()));
                         usuario = aux.getText();
                     }
                 });
@@ -241,8 +232,8 @@ public class Vin extends javax.swing.JFrame {
                 tabla.setModel(new ModeloTabla());
                 usuario_tabla.put(aux.getText(),tabla);
                 this.repaint();
-                incremento+=70;
             }
+            incremento+=70;
 
         }
         /*Debug*/
@@ -252,6 +243,7 @@ public class Vin extends javax.swing.JFrame {
     public boolean contiene(JPanel jp,Cliente cl){
         for(Component cp: jp.getComponents()){
             if(cp instanceof JButton && ((JButton) cp).getText().equals(cl.getNombre())){
+                System.out.println("Condicion contiene: " + ((JButton) cp).getText());
                 return(true);
             }
         }
