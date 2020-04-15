@@ -8,6 +8,7 @@ package p2pClient;
 import p2pServer.Cliente;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +34,10 @@ public class Vin extends javax.swing.JFrame {
         this.setResizable(false);
         this.usuario_tabla = new HashMap<>();
         this.usuario=null;
+
+        send.setEnabled(false);
+        send.setText("Selecciona un amigo para chatear con el.");
+        this.setTitle("Bienvenido " + P2pClient.yoNombre);
     }
 
     public HashMap<String, JTable> getUsuario_tabla() {
@@ -132,7 +137,7 @@ public class Vin extends javax.swing.JFrame {
 
 
         /*Send*/
-        send.setFont(new java.awt.Font("Cantarell", 0, 21)); // NOI18N
+        send.setFont(new java.awt.Font("Cantarell", 0, 16)); // NOI18N
         send.setText("Escribe tu mensaje aquí");
         send.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -171,6 +176,7 @@ public class Vin extends javax.swing.JFrame {
             send.setText(null);
     }
 
+    /*qitar este evento seguramente*/
     private void sendFocusLost(java.awt.event.FocusEvent evt) {
         // El perder el focus (clicar en otro elemento), se reinicia el mensaje informativo
         if(send.getText().equals("")){
@@ -179,20 +185,35 @@ public class Vin extends javax.swing.JFrame {
     }
 
     private void sendKeyTyped(java.awt.event.KeyEvent evt) {
-        /* Como el tamaño límite de los mensajes es 27 bytes,
-        cada vez que se introduce un nuevo caracter se comprueba si no rebasa el límite.
-        En caso afirmativo se rechazaría*/
-        if(send.getText().getBytes().length == 27){
+        /** Límite a los mensajes de 34 bytes.
+        * Cada vez que se introduce un nuevo caracter se comprueba si no rebasa el límite.
+        * En caso afirmativo se rechazaría
+         */
+        if(send.getText().getBytes().length == 34){
             evt.consume();
         }
     }
 
+    /**Para saber a quien enviar el mensaje, miramos el atributo usuario. Este nos indica el amigo con
+     * el que estoy hablando en el momento actual
+     */
     private void enviar(){
         /*Enviar*/
         for(Cliente clAux : P2pClient.amigos){
             if(clAux.getNombre().equals(usuario)){
                 try{
+                    /*Enviamos el mensaje*/
                     clAux.getInterfazRemota().mensaje(send.getText(), P2pClient.yoNombre);
+                    //Pero también lo añadimos a la tabla de conversación con ese usuario en la zona de la derecha.
+                    //Para ello iniciamos mensaje con {
+                    ModeloTabla modelo_aux =  (ModeloTabla) this.usuario_tabla.get(usuario).getModel();
+                    String  comentario = "{<html><span style='color:#178a1d; font-size:10pt;'>"+P2pClient.yoNombre+"</span>"
+                            + "<br>"
+                            + "<span style='color:white;font-weight:bold;background-color:"
+                            +"#178a1d"+ ";'>"+send.getText()+"</span></html>";
+                    modelo_aux.addComentario(comentario);
+                    //Limpiamos campo donde se introduce mensaje
+                    send.setText(null);
                 }catch(Exception e){
                     System.out.println("Error al enviar mensaje de " + P2pClient.yoNombre + " a " + clAux.getNombre());
                     System.out.println("Interfaz remota: " + clAux.getInterfazRemota());
@@ -201,7 +222,6 @@ public class Vin extends javax.swing.JFrame {
             }
         }
     }
-    /*Depurar está función. No funciona bien cuando entra Pablo*/
     /*Nota para eliminar el boton habrá que recorrer jPanel2 y eliminar el que tenga como texto un nombre ocncreto*/
     public void actualizarAmigos(){
         int incremento=70;
@@ -220,16 +240,51 @@ public class Vin extends javax.swing.JFrame {
                 /*creamos el controlador para el boton*/
                 aux.addActionListener(new ActionListener() {
 
+                    /*acción al pulsar en un amigo*/
                     public void actionPerformed(ActionEvent e) {
+                        /*El botón que anteriormente estaba deshabilitado, lo habilitamos*/
+                        if(usuario!=null){
+                            for(Component cp: jPanel2.getComponents()) {
+                                if(cp instanceof JButton && ((JButton) cp).getText().equals(usuario)) {
+                                    cp.setEnabled(true);
+                                    cp.setBackground( new Color(71,103,176));
+                                }
+                            }
+                        }
+                        /*Ponemos el botón del amigo actual deshabilitado*/
+                        aux.setEnabled(false);
+                        aux.setBackground(new Color(109, 0, 134));
+
+                        /*Colocamos la tabla de mensajes del usuario actual*/
                         scroll.setViewportView(usuario_tabla.get(aux.getText()));
+                        /*Ponemos el usuario actual con el que estamos hablando*/
                         usuario = aux.getText();
+                        /*Habilitamos el campo de introducción mensajes*/
+                        send.setEnabled(true);
+                        send.setText("Escribe tu mensaje aquí");
                     }
                 });
                 /*añadimos el botón*/
                 jPanel2.add(aux);
+
                 /*creamos la tabla*/
                 JTable tabla = new JTable();
                 tabla.setModel(new ModeloTabla());
+                /*Configuramos la tabla*/
+                tabla.setBackground(new java.awt.Color(235, 239, 242));
+                tabla.setFont(new java.awt.Font("Cantarell", 0, 16));
+                tabla.setGridColor(new java.awt.Color(2, 2, 2));
+                tabla.setIntercellSpacing(new java.awt.Dimension(0, 20));
+                tabla.setRowHeight(60);
+                tabla.setRowSelectionAllowed(false);
+                tabla.setShowHorizontalLines(false);
+                tabla.setShowVerticalLines(false);
+                tabla.setTableHeader(null);
+                /*Alinear 2º columna a derecha*/
+                DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
+                tcr.setHorizontalAlignment(SwingConstants.RIGHT);
+                tabla.getColumnModel().getColumn(1).setCellRenderer(tcr);
+
                 usuario_tabla.put(aux.getText(),tabla);
                 this.repaint();
             }
