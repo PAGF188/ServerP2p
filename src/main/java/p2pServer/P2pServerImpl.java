@@ -89,7 +89,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         json+="]";
 
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("/home/pablo/usuarios.json"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/p2pServer/usuarios.json"));
             bw.write(json);
             bw.close();
         } catch (IOException e) {
