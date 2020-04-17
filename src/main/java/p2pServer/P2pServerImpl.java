@@ -346,7 +346,9 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         JsonArray data = (JsonArray) obj;
         for(int i=0;i<data.size();i++){
             Peticion aux = new Gson().fromJson(data.get(i), Peticion.class);
-            if((!aux.getSolicitado().equals(solicitado) && !aux.getSolicitante().equals(solicitante)) || (!aux.getSolicitado().equals(solicitante) && !aux.getSolicitante().equals(solicitado))){
+            if(aux.getSolicitante().equals(solicitante) && aux.getSolicitado().equals(solicitado)){
+
+            }else{
                 peticiones.add(aux);
             }
         }
