@@ -53,7 +53,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         JSONParser parser = new JSONParser();
         Object obj=null;
         try {
-            obj = parser.parse(new FileReader("/home/pablo/usuarios.json"));
+            obj = parser.parse(new FileReader("src/main/java/p2pServer/usuarios.json"));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {

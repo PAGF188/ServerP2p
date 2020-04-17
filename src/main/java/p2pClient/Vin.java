@@ -314,7 +314,7 @@ public class Vin extends javax.swing.JFrame {
     /*Desconexión de un amigo actualizar IGrafica*/
     public void actualizarDesconexion(String nombre){
         /*Si estoy hablando con el que se descoceta null*/
-        if(usuario.equals(nombre)){
+        if(usuario!=null && usuario.equals(nombre)){
             usuario=null;
             send.setEnabled(false);
             send.setText("Selecciona un amigo para chatear con el.");
