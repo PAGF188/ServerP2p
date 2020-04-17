@@ -31,4 +31,12 @@ public interface P2pClientInterface extends java.rmi.Remote{
      */
     public void notificaConexion(Cliente cl) throws java.rmi.RemoteException;
 
+    /**
+     * Para notificar peticiones de amistad. Se le pasa el solicitante y solicitado. (solicitado debe ser igual a P2P.yoNombre)
+     * @param solicitante
+     * @param solicitado
+     * @throws java.rmi.RemoteException
+     */
+    public void notificaPeticionAmistad(String solicitante, String solicitado) throws java.rmi.RemoteException;
+
 }

@@ -43,4 +43,28 @@ public interface P2pServerInterface extends Remote {
     public void desLog(String nombre)
             throws Exception;
 
+    /**
+     * Para solicitar una petición de amistad.
+     * Si solicitado está concetado, se la envíamos directamente. (Nota: Obligar al cliente a que acepte/rechaze
+     * peticiones antes de salir de la aplicación (sino se perderían)).
+     * Si solicitado no está concetado, la almacenamos en el fichero peticiones.json y cuando se concete un nuevo cliente,
+     * procesamos el fichero y le envíamos sus peticiones en caso de tener.
+     * OJO: ES POSIBLE ENVIAR UNA PETICIÓN A ALGUIEN QUE YA ES MI AMIGO O DOS PETICIONES IGUALES. NECESARIO COMPROBACIÓN
+     * @param solicitante, usuario que la solicita
+     * @param solicitado, usuario a la que va dirigida
+     * @throws Exception
+     */
+    public void peticionAmistad(String solicitante, String solicitado)
+            throws Exception;
+
+    /**
+     * Para aceptar una petición por el solicitado.
+     * Añadimos a usuario el nuevo amigo y grabamos fichero. ADEMÁS invocamos método notificar conexión (si prodece)
+     * @param solicitante
+     * @param solicitado
+     * @throws Exception
+     */
+    public void aceptarPeticion(String solicitante, String solicitado)
+            throws Exception;
+
 }

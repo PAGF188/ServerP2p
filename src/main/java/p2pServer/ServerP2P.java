@@ -89,6 +89,11 @@ public class ServerP2P{
             /////////////////////////////////////////////////
             ////borrar
             */
+            try {
+                exportedObj.peticionAmistad("pepe","sinAmigo");
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
 
         }
         catch (Exception re) {

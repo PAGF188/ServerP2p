@@ -9,7 +9,14 @@ import java.io.*;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Objects;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * @autor: Pablo García
@@ -42,6 +49,11 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         usuarios= new ArrayList<>();
         clientes= new ArrayList<>();
         this.pasearUsuarios();
+
+        /**
+         * Hilo para manejar las peticiones de amistad.
+         * Lo que hace es leer el archivo. Cuando encunetra una nueva entrada, la procesa.
+         */
     }
 
     /**
@@ -49,7 +61,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
      * A mayores cada usuario queda almacenado en el Array usuarios.
      * De esta forma usuarios contiene el archivo estructurado.
      */
-    public void pasearUsuarios(){
+    public synchronized void pasearUsuarios(){
         JSONParser parser = new JSONParser();
         Object obj=null;
         try {
@@ -77,7 +89,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
     /**
      * Para grabar los usuario contenidos en usuarios al archivo.
      */
-    public void grabarUsuarios(){
+    public synchronized void grabarUsuarios(){
         Gson gson = new Gson();
         String json = "[";
 
@@ -210,6 +222,88 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
     }
 
     /**
+     * Peticion amistad
+     */
+    @Override
+    public void peticionAmistad(String solicitante, String solicitado) throws Exception {
+        /**
+         * Volcamos archivo a Array de peticiones
+         */
+        ArrayList<Peticion> peticiones= new ArrayList<>();
+        JsonParser parser = new JsonParser();
+        Object obj=null;
+        try {
+            obj = parser.parse(new FileReader("src/main/java/p2pServer/peticiones.json"));
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        JsonArray data = (JsonArray) obj;
+        for(int i=0;i<data.size();i++){
+            Peticion aux = new Gson().fromJson(data.get(i), Peticion.class);
+            peticiones.add(aux);
+        }
+
+        Peticion nueva = new Peticion(solicitante,solicitado);
+
+
+        /*Primera comprobacion: Que no exista ya la petición: */
+        for(Peticion p:peticiones){
+            if(p.equals(nueva)){
+                throw new Exception("La petición ya ha sido envíada");
+            }
+        }
+
+        /* Segunda comprobación: Que el solicitante no tenga YA como amigo al solicitado
+         * Tercera comprobación: Que el solicitado exista en el sistema.*/
+        boolean existe = false;
+        for(Usuario u : this.usuarios){
+            if(u.getNombre().equals(solicitante) && u.getAmigos().contains(solicitado)){
+                throw new Exception("Ya eres amigo de " + solicitado);
+            }
+            if(u.getNombre().equals(solicitado)){
+                existe=true;
+            }
+        }
+        if(!existe){
+            throw new Exception(solicitado + "No existe en el sistema");
+        }
+
+        /**
+         * Comprobaciones finalizadas
+         * Dos casos pueden pasar ahora:
+         * a) Cliente concetado -> le envíamos directamente la petición
+         * b) Cliente no concetado -> almacenamos la petición
+         */
+         for(Cliente conectado : this.clientes){
+             /*esta concetado*/
+             if(conectado.getNombre().equals(solicitado)){
+                 conectado.getInterfazRemota().notificaPeticionAmistad(solicitante,solicitado);
+                 return;
+             }
+         }
+
+         /* Si llegamos aquí el cliente no está concetado. Almacenamos petición en archivo
+          * Esta petición se enviará cuando el cliente se concete*/
+        peticiones.add(nueva);
+        String json = new Gson().toJson(peticiones);
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/p2pServer/peticiones.json"));
+            bw.write(json);
+            bw.close();
+        } catch (IOException e) {
+            System.out.println("Fallo al escribir archivo de peticiones");
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void aceptarPeticion(String solicitante, String solicitado) throws Exception {
+
+    }
+
+    /**
      * Encapsula cada elemento del array presente en usuarios.json
      */
     public class Usuario{
@@ -234,6 +328,36 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         }
         public void anhadirAmigo(String amigo){
             amigos.add(amigo);
+        }
+    }
+
+    /**
+     * Encapsula una peticion de amistad
+     */
+    public class Peticion{
+        private String solicitante;
+        private String solicitado;
+
+        public Peticion(String a, String b){
+            this.solicitante=a;
+            this.solicitado=b;
+        }
+
+        public String getSolicitante() { return solicitante; }
+        public String getSolicitado() { return solicitado; }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Peticion peticion = (Peticion) o;
+            return Objects.equals(solicitante, peticion.solicitante) &&
+                    Objects.equals(solicitado, peticion.solicitado);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(solicitante, solicitado);
         }
     }
 }
