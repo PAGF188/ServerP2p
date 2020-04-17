@@ -1,1 +1,1 @@
-[{"nombre":"juan","passwd":"juan","amigos":["pepe","pablo"]},{"nombre":"pepe","passwd":"pepe","amigos":["juan","pablo"]},{"nombre":"pablo","passwd":"pablo","amigos":["juan","pepe"]},{"nombre":"sinAmigo","passwd":"sinAmigo","amigos":[]}]
+[{"nombre":"juan","passwd":"juan","amigos":["pepe","pablo"]},{"nombre":"pepe","passwd":"pepe","amigos":["juan","pablo"]},{"nombre":"pablo","passwd":"pablo","amigos":["juan","pepe"]},{"nombre":"sinAmigo","passwd":"sinAmigo","amigos":[]},{"nombre":"caca","passwd":"caca","amigos":[]}]

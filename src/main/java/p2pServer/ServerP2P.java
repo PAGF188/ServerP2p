@@ -40,61 +40,21 @@ public class ServerP2P{
             //////////////////////////////////////////////////
             /////////////////////////////////////////////////
             ////borrar
-            /*
-            if(!exportedObj.registrarse("miguel","asd")){
-                System.out.println("Fallo al registrarse");
-            }
-            else{
-                System.out.println("Registro correcto");
-            }
 
-            try {
-                if(exportedObj.log("juan", "juan", null)==null){
-                    System.out.println("El usuario no está registrado o la contraseña es incorrecta");
-                }
-                else{
-                    System.out.println("Usuario logeado correctamente");
-                }
-            }catch (Exception e){
-                System.out.println(e.getMessage());
-            }
-
-            try {
-                if(exportedObj.log("pepe", "pepe", null)==null){
-                    System.out.println("El usuario no está registrado o la contraseña es incorrecta");
-                }
-                else{
-                    System.out.println("Usuario logeado correctamente");
-                }
-            }catch (Exception e){
-                System.out.println(e.getMessage());
-            }
-
-            try {
-                if(exportedObj.log("pepe", "pepe", null)==null){
-                    System.out.println("El usuario no está registrado o la contraseña es incorrecta");
-                }
-                else{
-                    System.out.println("Usuario logeado correctamente");
-                }
-            }catch (Exception e){
-                System.out.println(e.getMessage());
-            }
-
-            exportedObj.desLog("pepe");
-
-            //////////////////////////////////////////////////
-            /////////////////////////////////////////////////
-            //////////////////////////////////////////////////
-            /////////////////////////////////////////////////
-            ////borrar
-            */
             try {
                 exportedObj.peticionAmistad("pepe","sinAmigo");
             }catch (Exception e){
                 System.out.println(e.getMessage());
             }
 
+            Thread.sleep(10000);
+            try {
+                exportedObj.peticionAmistad("caca","juan");
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+
+            /*borrar*/
         }
         catch (Exception re) {
             System.out.println("!! Exception in ServerP2p.main: " + re.getMessage());

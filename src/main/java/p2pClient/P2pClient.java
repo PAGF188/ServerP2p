@@ -9,6 +9,7 @@ import p2pServer.Cliente;
 import p2pServer.P2pClientInterface;
 import p2pServer.P2pServerInterface;
 
+import java.lang.reflect.Array;
 import java.rmi.Naming;
 import java.util.ArrayList;
 
@@ -22,11 +23,14 @@ public class P2pClient {
     public static P2pClientInterface yo;
     public static P2pServerInterface server;
     public static ArrayList<Cliente> amigos;
+    public static ArrayList<String> peticionesAmmistad;
     
     public static void main(String[] args) {
         
         String registryURL = "rmi://localhost:1099/p2p";
-        
+
+        peticionesAmmistad = new ArrayList<>();
+
         try{
             //miramos si existe server en URL indicada
             server = (P2pServerInterface)Naming.lookup(registryURL);

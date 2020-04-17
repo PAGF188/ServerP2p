@@ -165,19 +165,30 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
                     }
                 }
                 //Creamos al cliente actual y lo añadimos al array de clientes.
-
                 this.clientes.add(cl_actual);
-                //------debug
-                System.out.println("Nuevo usuario " + nombre+ " logueado");
-                System.out.println("Amigos: ");
-                for(Cliente debug : amigos){
-                    System.out.println("Amigo: " + debug.getNombre() + "  " + debug.getInterfazRemota());
+
+                /*Recorremos archivo de peticiones de amistad, y le notificamos de ellas*/
+                /*Lectura archivo*/
+                    ArrayList<Peticion> peticiones= new ArrayList<>();
+                    JsonParser parser = new JsonParser();
+                    Object obj=null;
+                    try {
+                        obj = parser.parse(new FileReader("src/main/java/p2pServer/peticiones.json"));
+                    }catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    JsonArray data = (JsonArray) obj;
+                    for(int i=0;i<data.size();i++){
+                        Peticion auxP = new Gson().fromJson(data.get(i), Peticion.class);
+                        peticiones.add(auxP);
+                    }
+                 /*Fin letura archivo*/
+                for(Peticion pet: peticiones){
+                    if(pet.getSolicitado().equals(cl_actual.getNombre())){
+                        cl_actual.getInterfazRemota().notificaPeticionAmistad(pet.getSolicitante(),pet.getSolicitado());
+                    }
                 }
-                System.out.println("\nClientes actuales");
-                for(Cliente debug : this.clientes){
-                    System.out.println("Cliente: " + debug.getNombre() + "  " + debug.getInterfazRemota());
-                }
-                //debug--------
+
                 return(amigos);
             }
         }
@@ -226,6 +237,13 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
      */
     @Override
     public void peticionAmistad(String solicitante, String solicitado) throws Exception {
+
+        /*no te puedes enviar ua peticion a ti mismo*/
+
+        if(solicitado.equals(solicitante)){
+            throw new Exception("No te puedes enviar una petición a ti mismo");
+        }
+
         /**
          * Volcamos archivo a Array de peticiones
          */
@@ -245,11 +263,10 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
 
         Peticion nueva = new Peticion(solicitante,solicitado);
 
-
         /*Primera comprobacion: Que no exista ya la petición: */
         for(Peticion p:peticiones){
             if(p.equals(nueva)){
-                throw new Exception("La petición ya ha sido envíada");
+                throw new Exception(solicitado + " ya tiene una petición tuya.");
             }
         }
 

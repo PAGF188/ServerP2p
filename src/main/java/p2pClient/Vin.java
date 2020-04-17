@@ -174,9 +174,30 @@ public class Vin extends javax.swing.JFrame {
             }
         });
 
+        /*Boton peticiones*/
+        peticiones = new JButton();
+        peticiones.setText("Peticiones");
+        peticiones.setSize(160,38);
+        peticiones.setLocation(31, 410);
+        peticiones.setBackground(new java.awt.Color(188, 167, 65));
+        peticiones.setFont(new java.awt.Font("Cantarell", 1, 24));
+        peticiones.setForeground(new java.awt.Color(254, 254, 254));
+        peticiones.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peticionesActionPerformed(evt);
+            }
+        });
+        jPanel2.add(peticiones);
 
         pack();
     }// </editor-fold>
+
+    /*Al pulsar en peticiones*/
+    private void peticionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registroActionPerformed
+        Vpeticiones vpe = new Vpeticiones(this);
+        vpe.setVisible(true);
+        this.setVisible(false);
+    }
 
     /**/
     private void sendKeyPressed(java.awt.event.KeyEvent evt) {
@@ -354,12 +375,13 @@ public class Vin extends javax.swing.JFrame {
         return(false);
     }
 
-    // Variables declaration - do not modify
+    // Variables declaration
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane scroll;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JTextField send;
+    private JButton peticiones;
     // End of variables declaration
 }
