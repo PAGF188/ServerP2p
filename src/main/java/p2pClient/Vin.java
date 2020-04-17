@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +32,8 @@ public class Vin extends javax.swing.JFrame {
     /*Referencia a peticiones amistad*/
     public Vpeticiones vpe;
 
+    private ArrayList<JButton> botones;
+
     public Vin() {
         initComponents();
 
@@ -39,6 +42,7 @@ public class Vin extends javax.swing.JFrame {
         this.usuario_tabla = new HashMap<>();
         this.usuario=null;
         this.vpe=null;
+        botones=new ArrayList<>();
 
         send.setEnabled(false);
         send.setText("Selecciona un amigo para chatear con el.");
@@ -308,6 +312,7 @@ public class Vin extends javax.swing.JFrame {
                     }
                 });
                 /*añadimos el botón*/
+                botones.add(aux);
                 jPanel2.add(aux);
 
                 /*creamos la tabla*/
@@ -352,22 +357,27 @@ public class Vin extends javax.swing.JFrame {
         usuario_tabla.remove(usuario_tabla.get(nombre));
 
         /*Eliminamos su botón asociado*/
-        JButton borrar=null;
-        for(Component cp: jPanel2.getComponents()) {
-            if (cp instanceof JButton && ((JButton) cp).getText().equals(nombre)) {
-                borrar = (JButton) cp;
+        ArrayList<JButton> eliminar = new ArrayList<>();
+        for(JButton b : this.botones){
+            if(b.getText().equals(nombre))
+                eliminar.add(b);
+        }
+        botones.removeAll(eliminar);
+
+        for(Component cp : jPanel2.getComponents()){
+            if(cp instanceof JButton && !((JButton) cp).getText().equals("Peticiones")){
+                jPanel2.remove(cp);
             }
         }
-        jPanel2.remove(borrar);
 
         /*Recolocamos el resto de elementos*/
         int incremento=70;
-        for(Component cp: jPanel2.getComponents()) {
-            if (cp instanceof JButton && !((JButton) cp).getText().equals("Peticiones")) {
-                cp.setLocation(41, incremento);
-            }
-            incremento+=70;
+        for(JButton b : this.botones){
+             b.setLocation(41, incremento);
+             jPanel2.add(b);
+             incremento+=70;
         }
+
 
         this.repaint();
     }
