@@ -28,6 +28,9 @@ public class Vin extends javax.swing.JFrame {
     /*Usuario activo con el que estoy hablando*/
     private String usuario;
 
+    /*Referencia a peticiones amistad*/
+    public Vpeticiones vpe;
+
     public Vin() {
         initComponents();
 
@@ -35,6 +38,7 @@ public class Vin extends javax.swing.JFrame {
         this.setResizable(false);
         this.usuario_tabla = new HashMap<>();
         this.usuario=null;
+        this.vpe=null;
 
         send.setEnabled(false);
         send.setText("Selecciona un amigo para chatear con el.");
@@ -194,8 +198,10 @@ public class Vin extends javax.swing.JFrame {
 
     /*Al pulsar en peticiones*/
     private void peticionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registroActionPerformed
-        Vpeticiones vpe = new Vpeticiones(this);
-        vpe.setVisible(true);
+        if(this.vpe==null){
+            this.vpe = new Vpeticiones(this);
+        }
+        this.vpe.setVisible(true);
         this.setVisible(false);
     }
 
@@ -357,9 +363,10 @@ public class Vin extends javax.swing.JFrame {
         /*Recolocamos el resto de elementos*/
         int incremento=70;
         for(Component cp: jPanel2.getComponents()) {
-            if (cp instanceof JButton) {
+            if (cp instanceof JButton && !((JButton) cp).getText().equals("Peticiones")) {
                 cp.setLocation(41, incremento);
             }
+            incremento+=70;
         }
 
         this.repaint();

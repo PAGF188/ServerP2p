@@ -62,6 +62,8 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
      * De esta forma usuarios contiene el archivo estructurado.
      */
     public synchronized void pasearUsuarios(){
+        usuarios=null;
+        usuarios=new ArrayList<>();
         JSONParser parser = new JSONParser();
         Object obj=null;
         try {
@@ -316,8 +318,67 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
     }
 
     @Override
-    public void aceptarPeticion(String solicitante, String solicitado) throws Exception {
+    public void aceptarPeticion(boolean aceptar, String solicitante, String solicitado) throws Exception {
+        if(aceptar) {
+            /*Recorremos usuarios añadiendo las nuevas amistades*/
+            for (Usuario aux : this.usuarios) {
+                if (aux.getNombre().equals(solicitante)) {
+                    aux.getAmigos().add(solicitado);
+                }
+                if (aux.getNombre().equals(solicitado)) {
+                    aux.getAmigos().add(solicitante);
+                }
+            }
+            /*Almacenamos los datos en el archivo*/
+            this.grabarUsuarios();
+            this.pasearUsuarios();
+        }
 
+        /*Borramos la petición del archivo de peticiones -> leemos todas menos la aceptar*/
+        ArrayList<Peticion> peticiones= new ArrayList<>();
+        JsonParser parser = new JsonParser();
+        Object obj=null;
+        try {
+            obj = parser.parse(new FileReader("src/main/java/p2pServer/peticiones.json"));
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        JsonArray data = (JsonArray) obj;
+        for(int i=0;i<data.size();i++){
+            Peticion aux = new Gson().fromJson(data.get(i), Peticion.class);
+            if((!aux.getSolicitado().equals(solicitado) && !aux.getSolicitante().equals(solicitante)) || (!aux.getSolicitado().equals(solicitante) && !aux.getSolicitante().equals(solicitado))){
+                peticiones.add(aux);
+            }
+        }
+
+        /*Almacenamos todas las peticiones (menos la que no se leyo)*/
+        String json = new Gson().toJson(peticiones);
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/p2pServer/peticiones.json"));
+            bw.write(json);
+            bw.close();
+        } catch (IOException e) {
+            System.out.println("Fallo al escribir archivo de peticiones");
+            e.printStackTrace();
+        }
+
+        if(aceptar) {
+            /*Finalmente tenemos que notificar a los usuarios en caso de que se encuentren concetados*/
+            Cliente solicitante_ = null;
+            Cliente solicitado_ = null;
+            for (Cliente cl : this.clientes) {
+                if (cl.getNombre().equals(solicitante))
+                    solicitante_ = cl;
+                if (cl.getNombre().equals(solicitado))
+                    solicitado_ = cl;
+            }
+
+            if (solicitante_ != null && solicitado_ != null) {
+                solicitado_.getInterfazRemota().notificaConexion(solicitante_);
+                solicitante_.getInterfazRemota().notificaConexion(solicitado_);
+            }
+        }
     }
 
     /**

@@ -64,10 +64,5 @@ public class P2pClientImpl extends UnicastRemoteObject implements P2pClientInter
     @Override
     public void notificaPeticionAmistad(String solicitante, String solicitado) throws RemoteException {
         P2pClient.peticionesAmmistad.add(solicitante);
-        /*borrar*/
-        for(String c : P2pClient.peticionesAmmistad){
-            System.out.println("Peticion: " + c);
-        }
-        System.out.println("\n\n");
     }
 }

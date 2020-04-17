@@ -58,13 +58,14 @@ public interface P2pServerInterface extends Remote {
             throws Exception;
 
     /**
-     * Para aceptar una petición por el solicitado.
+     * Para aceptar o rechazar una petición.
      * Añadimos a usuario el nuevo amigo y grabamos fichero. ADEMÁS invocamos método notificar conexión (si prodece)
+     * @param aceptar, True-> aceptar peticion, | False-> rechazar peticion
      * @param solicitante
      * @param solicitado
      * @throws Exception
      */
-    public void aceptarPeticion(String solicitante, String solicitado)
+    public void aceptarPeticion(boolean aceptar, String solicitante, String solicitado)
             throws Exception;
 
 }

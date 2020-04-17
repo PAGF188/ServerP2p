@@ -35,26 +35,6 @@ public class ServerP2P{
             listRegistry(URL);
             System.out.println("\n**** P2P Server listo ****\n\n");
 
-            //////////////////////////////////////////////////
-            /////////////////////////////////////////////////
-            //////////////////////////////////////////////////
-            /////////////////////////////////////////////////
-            ////borrar
-
-            try {
-                exportedObj.peticionAmistad("pepe","sinAmigo");
-            }catch (Exception e){
-                System.out.println(e.getMessage());
-            }
-
-            Thread.sleep(10000);
-            try {
-                exportedObj.peticionAmistad("caca","juan");
-            }catch (Exception e){
-                System.out.println(e.getMessage());
-            }
-
-            /*borrar*/
         }
         catch (Exception re) {
             System.out.println("!! Exception in ServerP2p.main: " + re.getMessage());
