@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -38,6 +39,21 @@ public class Vin extends javax.swing.JFrame {
         send.setEnabled(false);
         send.setText("Selecciona un amigo para chatear con el.");
         this.setTitle("Bienvenido " + P2pClient.yoNombre);
+
+        /*Evento para salir de la ventana*/
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                try {
+                    P2pClient.server.desLog(P2pClient.yoNombre);
+                    e.getWindow().dispose();
+                    System.exit(1);
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 
     public HashMap<String, JTable> getUsuario_tabla() {
@@ -293,6 +309,39 @@ public class Vin extends javax.swing.JFrame {
         }
         /*Debug*/
         System.out.println("Componentes jpanel4: " + jPanel4.getComponents().length);
+    }
+
+    /*Desconexión de un amigo actualizar IGrafica*/
+    public void actualizarDesconexion(String nombre){
+        /*Si estoy hablando con el que se descoceta null*/
+        if(usuario.equals(nombre)){
+            usuario=null;
+            send.setEnabled(false);
+            send.setText("Selecciona un amigo para chatear con el.");
+            scroll.setViewport(null);
+        }
+
+        /*Eliminamos su entrada en HashMap*/
+        usuario_tabla.remove(usuario_tabla.get(nombre));
+
+        /*Eliminamos su botón asociado*/
+        JButton borrar=null;
+        for(Component cp: jPanel2.getComponents()) {
+            if (cp instanceof JButton && ((JButton) cp).getText().equals(nombre)) {
+                borrar = (JButton) cp;
+            }
+        }
+        jPanel2.remove(borrar);
+
+        /*Recolocamos el resto de elementos*/
+        int incremento=70;
+        for(Component cp: jPanel2.getComponents()) {
+            if (cp instanceof JButton) {
+                cp.setLocation(41, incremento);
+            }
+        }
+
+        this.repaint();
     }
 
     public boolean contiene(JPanel jp,Cliente cl){

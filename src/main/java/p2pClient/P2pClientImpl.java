@@ -4,6 +4,7 @@ import p2pServer.P2pClientInterface;
 
 import java.rmi.*;
 import java.rmi.server.*;
+import java.util.ArrayList;
 
 
 /**
@@ -30,10 +31,24 @@ public class P2pClientImpl extends UnicastRemoteObject implements P2pClientInter
                 +color+ ";'>"+message+"</span></html>";
         aux.addComentario(comentario);
     }
-    
+
+    /** La entrada es el nombre del cliente a desconcetarse.
+     * Recorremos la lsita de amigos, y si el nombre coinicide lo eliminamos.
+     */
     @Override
     public void notificaDesconexion(String nombre){
+        /*Lo eliminamos de la lista*/
+        ArrayList<Cliente> eliminar = new ArrayList<>();
+        for(Cliente aux: P2pClient.amigos){
+            if(aux.getNombre().equals(nombre)){
+                eliminar.add(aux);
+                break;
+            }
+        }
+        P2pClient.amigos.removeAll(eliminar);
 
+        /*Actualizamos la interfaz gráfica*/
+        vin.actualizarDesconexion(nombre);
     }
 
     @Override

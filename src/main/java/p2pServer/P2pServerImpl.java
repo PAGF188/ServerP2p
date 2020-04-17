@@ -179,17 +179,29 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
      */
     @Override
     public synchronized void desLog(String nombre) {
-        ArrayList<Cliente> eliminar = new ArrayList<>();
+        /*Buscamos al usuario*/
+        Usuario a_desconcetar=null;
+        for(Usuario aux : this.usuarios){
+            if(aux.getNombre().equals(nombre)){
+                a_desconcetar=aux;
+            }
+        }
 
+        /*Recorremos clientes activos en la aplicación
+        * Si es el que intenta desconcetarse lo eliminamos.
+        * Si es otro y es amigo, le notificamos*/
+        ArrayList<Cliente> eliminar = new ArrayList<>();
         for(Cliente cl : this.clientes){
             if(cl.getNombre().equals(nombre)){
                 eliminar.add(cl);
             }
             else{
-                try {
-                    cl.getInterfazRemota().notificaDesconexion(nombre);
-                } catch (RemoteException e) {
-                    System.out.println(e.getMessage());
+                if(a_desconcetar.getAmigos().contains(cl.getNombre())){
+                    try {
+                        cl.getInterfazRemota().notificaDesconexion(nombre);
+                    } catch (RemoteException e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
             }
         }
