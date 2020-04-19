@@ -44,6 +44,9 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
      */
     private ArrayList<Cliente> clientes;
 
+    private String rutaP = "src/main/java/p2pServer/peticiones.json";
+    private String rutaU = "src/main/java/p2pServer/usuarios.json";
+
     public P2pServerImpl() throws RemoteException {
         super( );
         usuarios= new ArrayList<>();
@@ -67,7 +70,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         JSONParser parser = new JSONParser();
         Object obj=null;
         try {
-            obj = parser.parse(new FileReader("src/main/java/p2pServer/usuarios.json"));
+            obj = parser.parse(new FileReader(rutaU));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -103,7 +106,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         json+="]";
 
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/p2pServer/usuarios.json"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(rutaU));
             bw.write(json);
             bw.close();
         } catch (IOException e) {
@@ -175,7 +178,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
                     JsonParser parser = new JsonParser();
                     Object obj=null;
                     try {
-                        obj = parser.parse(new FileReader("src/main/java/p2pServer/peticiones.json"));
+                        obj = parser.parse(new FileReader(rutaP));
                     }catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -253,7 +256,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         JsonParser parser = new JsonParser();
         Object obj=null;
         try {
-            obj = parser.parse(new FileReader("src/main/java/p2pServer/peticiones.json"));
+            obj = parser.parse(new FileReader(rutaP));
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -284,7 +287,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
             }
         }
         if(!existe){
-            throw new Exception(solicitado + "No existe en el sistema");
+            throw new Exception(solicitado + " No existe en el sistema");
         }
 
         /**
@@ -307,7 +310,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         String json = new Gson().toJson(peticiones);
 
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/p2pServer/peticiones.json"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(rutaP));
             bw.write(json);
             bw.close();
         } catch (IOException e) {
@@ -339,7 +342,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         JsonParser parser = new JsonParser();
         Object obj=null;
         try {
-            obj = parser.parse(new FileReader("src/main/java/p2pServer/peticiones.json"));
+            obj = parser.parse(new FileReader(rutaP));
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -357,7 +360,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         String json = new Gson().toJson(peticiones);
 
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/java/p2pServer/peticiones.json"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(rutaP));
             bw.write(json);
             bw.close();
         } catch (IOException e) {

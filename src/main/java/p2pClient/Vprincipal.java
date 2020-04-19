@@ -14,6 +14,8 @@ public class Vprincipal extends javax.swing.JFrame {
     private Cliente yo;
     //interfaz remota al servidor
     private P2pServerInterface server;
+
+    private Vregistro vr;
     
     public Vprincipal(P2pServerInterface server) {
         initComponents();
@@ -211,9 +213,13 @@ public class Vprincipal extends javax.swing.JFrame {
 
     private void registroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registroActionPerformed
         // TODO add your handling code here:
-        Vregistro vr = new Vregistro(this);
+        if(vr==null)
+            vr = new Vregistro(this);
         vr.setVisible(true);
         this.setVisible(false);
+        usuario.setText(null);
+        passwd.setText(null);
+        error.setText(null);
     }//GEN-LAST:event_registroActionPerformed
 
     private void entrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entrarActionPerformed

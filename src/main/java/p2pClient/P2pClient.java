@@ -11,6 +11,7 @@ import p2pServer.P2pServerInterface;
 
 import java.lang.reflect.Array;
 import java.rmi.Naming;
+import java.rmi.RMISecurityManager;
 import java.util.ArrayList;
 
 /**
@@ -30,6 +31,14 @@ public class P2pClient {
         String registryURL = "rmi://localhost:1099/p2p";
 
         peticionesAmmistad = new ArrayList<>();
+
+        /*try {
+            System.setSecurityManager(new
+                    RMISecurityManager( ));
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+        }*/
 
         try{
             //miramos si existe server en URL indicada

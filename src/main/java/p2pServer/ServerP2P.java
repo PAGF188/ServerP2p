@@ -20,6 +20,13 @@ public class ServerP2P{
         int puerto;
         String URL;  //url de registro
 
+        /*try {
+            System.setSecurityManager(new
+                    RMISecurityManager( ));
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+        }*/
         try{
             System.out.print("Introduce el puerto para el registro RMI: \n");
             puerto = Integer.parseInt((br.readLine()).trim());
