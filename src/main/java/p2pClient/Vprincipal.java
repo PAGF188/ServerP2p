@@ -96,7 +96,7 @@ public class Vprincipal extends javax.swing.JFrame {
             }
         });
 
-        error.setForeground(new java.awt.Color(217, 21, 21));
+        error.setForeground(new java.awt.Color(109, 0, 134));
         error.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         error.setText("error");
 

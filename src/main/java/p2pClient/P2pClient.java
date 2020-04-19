@@ -23,7 +23,7 @@ public class P2pClient {
     public static String yoNombre;
     public static P2pClientInterface yo;
     public static P2pServerInterface server;
-    public static ArrayList<Cliente> amigos;
+    public static ArrayList<Cliente> amigos;   //amigos concetados
     public static ArrayList<String> peticionesAmmistad;
     
     public static void main(String[] args) {

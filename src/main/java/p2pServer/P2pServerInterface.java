@@ -3,13 +3,12 @@ import java.rmi.*;
 import java.util.ArrayList;
 
 /**
- * Interfaz para objeto P2pServer
+ * Interfaz para objeto P2pServer. Comunucación servidor-cliente
+ * Solo muestra operaciones útiles para los clientes.
  * @autor: Pablo García
- * solo muestra operaciones útiles para los clientes.
  */
 
 public interface P2pServerInterface extends Remote {
-
 
     /**
      * El objetivo es registrarse con un nombre y una contraseña en el servidor.
@@ -28,14 +27,14 @@ public interface P2pServerInterface extends Remote {
      * @param passwd, contraseña
      * @param client, referencia remota a la interfaz del cliente que hizo log
      * @return,  referencias remotas a las interfaces de sus amigos
-     * @throws Exception
+     * @throws Exception Credenciales incorrectas | Usuario ya logeado
      * @throws java.rmi.RemoteException
      */
     public ArrayList<Cliente> log(String nombre, String passwd, P2pClientInterface client)
             throws Exception,java.rmi.RemoteException;
 
     /**
-     * Eliminar al cliente actual del servidor y notificar a todos los clientes, que el cliente que hizo
+     * Eliminar al cliente actual del servidor y notificar a todos sus amigos, que el cliente que hizo
      * log-out ya no esta activo.
      * @param nombre, del cliente a hacer log-out
      * @throws java.lang.Exception
@@ -45,14 +44,12 @@ public interface P2pServerInterface extends Remote {
 
     /**
      * Para solicitar una petición de amistad.
-     * Si solicitado está concetado, se la envíamos directamente. (Nota: Obligar al cliente a que acepte/rechaze
-     * peticiones antes de salir de la aplicación (sino se perderían)).
+     * Si solicitado está concetado, se la envíamos directamente.
      * Si solicitado no está concetado, la almacenamos en el fichero peticiones.json y cuando se concete un nuevo cliente,
      * procesamos el fichero y le envíamos sus peticiones en caso de tener.
-     * OJO: ES POSIBLE ENVIAR UNA PETICIÓN A ALGUIEN QUE YA ES MI AMIGO O DOS PETICIONES IGUALES. NECESARIO COMPROBACIÓN
      * @param solicitante, usuario que la solicita
      * @param solicitado, usuario a la que va dirigida
-     * @throws Exception
+     * @throws Exception | Peticion a ti mismo.  |  El solicitado ya tiene una petición tuya |  Ya sois amigos  | No existe el solicitado en el sistema
      */
     public void peticionAmistad(String solicitante, String solicitado)
             throws Exception;

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 public class P2pClientImpl extends UnicastRemoteObject implements P2pClientInterface {
 
+     /*Referencia a la interfaz de mensajes para poder actualizarla con los entrantes*/
      public Vin vin;
 
      public P2pClientImpl(Vin vin) throws RemoteException {
@@ -55,14 +56,11 @@ public class P2pClientImpl extends UnicastRemoteObject implements P2pClientInter
     public void notificaConexion(Cliente cl){
         P2pClient.amigos.add(cl);
         vin.actualizarAmigos();
-        System.out.println("Notificacion entrante de "+ cl.getNombre() + " . Amigos actuales: ");
-        for(Cliente cl2 : P2pClient.amigos){
-            System.out.println(cl2.getNombre());
-        }
     }
 
     @Override
     public void notificaPeticionAmistad(String solicitante, String solicitado) throws RemoteException {
+        /*Si ya existe la petición, no la almacenamos*/
         for(String aux: P2pClient.peticionesAmmistad){
             if(aux.equals(solicitante))
                 return;

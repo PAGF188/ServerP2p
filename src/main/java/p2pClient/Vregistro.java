@@ -81,7 +81,7 @@ public class Vregistro extends javax.swing.JFrame {
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Contraseña: ");
 
-        error.setForeground(new java.awt.Color(222, 14, 17));
+        error.setForeground(new java.awt.Color(109, 0, 134));
         error.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         error.setText("jLabel1");
 

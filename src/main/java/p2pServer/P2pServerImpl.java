@@ -27,6 +27,7 @@ import com.google.gson.JsonParser;
  * 3) Manejar el archivo de usuarios
  * 4) Manejar la lista de clientes dinámicos (que hicieron log-in)
  * 5) Log-out y notificacion a amigos
+ * 6) Manejo de peticiones de amistad.
  */
 
 public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInterface{
@@ -38,7 +39,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
     private ArrayList<Usuario> usuarios;
 
     /**
-     *  Usuarios a nivel de interfaces remotas(aplicacion)
+     *  Usuarios a nivel de interfaces remotas (aplicacion)
      *  Son dinámicaos. TODOS los clientes logeados y por lo tanto activos
      *  en este momento.
      */
@@ -47,16 +48,16 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
     private String rutaP = "src/main/java/p2pServer/peticiones.json";
     private String rutaU = "src/main/java/p2pServer/usuarios.json";
 
+    /*private String rutaP = "./peticiones.json";
+    private String rutaU = "./usuarios.json";*/
+
     public P2pServerImpl() throws RemoteException {
         super( );
         usuarios= new ArrayList<>();
         clientes= new ArrayList<>();
-        this.pasearUsuarios();
 
-        /**
-         * Hilo para manejar las peticiones de amistad.
-         * Lo que hace es leer el archivo. Cuando encunetra una nueva entrada, la procesa.
-         */
+        /*Cargamos el fichero de usuarios en this.usuarios*/
+        this.pasearUsuarios();
     }
 
     /**
@@ -92,7 +93,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
     }
 
     /**
-     * Para grabar los usuario contenidos en usuarios al archivo.
+     * Grabar this.usuarios al archivo usuarios
      */
     public synchronized void grabarUsuarios(){
         Gson gson = new Gson();
@@ -135,16 +136,14 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         this.usuarios.add(aux);
         //Grabamos a archivo
         this.grabarUsuarios();
-        //---debug
-        System.out.println("Nuevo usuario " + nombre + "registrado");
-        //debug----
         return(true);
     }
 
     /**
-     * Recorre Usuarios para comprobar nombre y passwd correctos.
-     * Recorre clientes para ver si no esta logeado. Añadirlo, obtener amigos y notificar a los amigos su conexión
-     * Devuelve null si fallo credenciales
+     * Recorre this.usuarios para comprobar nombre y passwd correctos.
+     * Recorre this.clientes para ver si no esta ya logeado.
+     * Se añade a this.clientes, notificamos a sus amigos la nueva conexión.
+     * Devuelve null si fallo credenciales | sus amigos en caso correcto
      */
     @Override
     public synchronized ArrayList<Cliente> log(String nombre, String passwd, P2pClientInterface client) throws Exception {
@@ -202,12 +201,12 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
     }
 
     /**
-     * Recorremos clientes. Si es el que hace log-out, lo eliminamos. Si es otro, notificamos su desconexión
+     * Recorremos clientes. Si es el que hace log-out, lo eliminamos. Si es otro y amigo, notificamos su desconexión
      * @param nombre, del cliente a hacer log-out
      */
     @Override
     public synchronized void desLog(String nombre) {
-        /*Buscamos al usuario*/
+        /*Buscamos al usuario para obtener su lista de amigos*/
         Usuario a_desconcetar=null;
         for(Usuario aux : this.usuarios){
             if(aux.getNombre().equals(nombre)){
@@ -229,6 +228,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
                         cl.getInterfazRemota().notificaDesconexion(nombre);
                     } catch (RemoteException e) {
                         System.out.println(e.getMessage());
+                        e.printStackTrace();
                     }
                 }
             }
@@ -238,10 +238,16 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
     }
 
     /**
-     * Peticion amistad
+     * Para solicitar una petición de amistad.
+     * Si solicitado está concetado, se la envíamos directamente.
+     * Si solicitado no está concetado, la almacenamos en el fichero peticiones.json y cuando se concete un nuevo cliente,
+     * procesamos el fichero y le envíamos sus peticiones en caso de tener.
+     * @param solicitante, usuario que la solicita
+     * @param solicitado, usuario a la que va dirigida
+     * @throws Exception | Peticion a ti mismo.  |  El solicitado ya tiene una petición tuya |  Ya sois amigos  | No existe el solicitado en el sistema
      */
     @Override
-    public void peticionAmistad(String solicitante, String solicitado) throws Exception {
+    public synchronized void peticionAmistad(String solicitante, String solicitado) throws Exception {
 
         /*no te puedes enviar ua peticion a ti mismo*/
 
@@ -250,7 +256,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
         }
 
         /**
-         * Volcamos archivo a Array de peticiones
+         * Leemos el archivo de peticiones -> Los datos quedan almacenados en ArrayList<> peticiones
          */
         ArrayList<Peticion> peticiones= new ArrayList<>();
         JsonParser parser = new JsonParser();
@@ -266,6 +272,7 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
             peticiones.add(aux);
         }
 
+        /*Creamos objeto auxiliar con la petición introducida como parámetro*/
         Peticion nueva = new Peticion(solicitante,solicitado);
 
         /*Primera comprobacion: Que no exista ya la petición: */
@@ -317,11 +324,12 @@ public class P2pServerImpl extends UnicastRemoteObject implements P2pServerInter
             System.out.println("Fallo al escribir archivo de peticiones");
             e.printStackTrace();
         }
-
     }
 
     @Override
-    public void aceptarPeticion(boolean aceptar, String solicitante, String solicitado) throws Exception {
+    public synchronized void aceptarPeticion(boolean aceptar, String solicitante, String solicitado) throws Exception {
+
+        /*Si se acepta. Añadimos la nueva amistad tanto en el solictante como en el solicitado. Y grabamos los datos en archivo*/
         if(aceptar) {
             /*Recorremos usuarios añadiendo las nuevas amistades*/
             for (Usuario aux : this.usuarios) {

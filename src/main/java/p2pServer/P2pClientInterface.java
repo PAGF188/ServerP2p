@@ -10,7 +10,7 @@ import java.rmi.*;
 public interface P2pClientInterface extends java.rmi.Remote{
 
     /**
-     * Este método es invocado por otro cliente para enviar un mensaje
+     * Este método es invocado por otro cliente para enviarme un mensaje.
      * @param message, información que se pasa.
      * @throws java.rmi.RemoteException
      */
@@ -32,7 +32,8 @@ public interface P2pClientInterface extends java.rmi.Remote{
     public void notificaConexion(Cliente cl) throws java.rmi.RemoteException;
 
     /**
-     * Para notificar peticiones de amistad. Se le pasa el solicitante y solicitado. (solicitado debe ser igual a P2P.yoNombre)
+     * Este método es inocado por el servidor para notificar una nueva petición de amistad.
+     * Se le pasa el solicitante y solicitado. (solicitado debe ser igual a P2P.yoNombre)
      * @param solicitante
      * @param solicitado
      * @throws java.rmi.RemoteException
