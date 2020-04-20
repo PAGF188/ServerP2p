@@ -66,5 +66,8 @@ public class P2pClientImpl extends UnicastRemoteObject implements P2pClientInter
                 return;
         }
         P2pClient.peticionesAmmistad.add(solicitante);
+        if(vin.vpe!=null){
+            vin.vpe.actualizarPeticiones();
+        }
     }
 }

@@ -60,9 +60,9 @@ public class Vpeticiones extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         atras = new javax.swing.JButton();
         error = new javax.swing.JLabel();
-        actualizar = new javax.swing.JButton();
+        //actualizar = new javax.swing.JButton();
 
-        actualizar.setBackground(new java.awt.Color(109, 0, 134));
+        /*actualizar.setBackground(new java.awt.Color(109, 0, 134));
         actualizar.setFont(new java.awt.Font("Cantarell", 1, 18));
         actualizar.setForeground(new java.awt.Color(254, 254, 254));
         actualizar.setText("Actualizar");
@@ -70,7 +70,7 @@ public class Vpeticiones extends javax.swing.JFrame {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 actualizarActionPerformed(evt);
             }
-        });
+        });*/
 
         amigo.setFont(new java.awt.Font("Cantarell", 0, 24));
         amigo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -184,12 +184,12 @@ public class Vpeticiones extends javax.swing.JFrame {
                 jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGap(267, 267, 267)
-                                .addComponent(actualizar)
+                                //.addComponent(actualizar)
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
                 jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(actualizar)
+                        //.addComponent(actualizar)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -312,7 +312,7 @@ public class Vpeticiones extends javax.swing.JFrame {
 
 
     // Variables declaration
-    private javax.swing.JButton actualizar;
+    //private javax.swing.JButton actualizar;
     private javax.swing.JButton atras;
     private javax.swing.JButton enviar;
     private javax.swing.JLabel jLabel2;
